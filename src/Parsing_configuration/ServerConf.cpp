@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:02:05 by esellier          #+#    #+#             */
-/*   Updated: 2025/07/14 16:48:06 by esellier         ###   ########.fr       */
+/*   Updated: 2025/07/16 13:59:33 by cle-tron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ std::vector<std::pair<int, std::string> >	ServerConf::getListens()
 	return _listens;
 }
 
-std::vector<std::string>	ServerConf::getServerName()
+std::vector<std::string>	ServerConf::getServerName() const
 {
 	return _serverName;
 }

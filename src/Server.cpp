@@ -6,11 +6,12 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 10:40:50 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/07/14 18:27:37 by esellier         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:57:15 by cle-tron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "HttpRequest.hpp"
 #include "ParsingConf.hpp"
 
 // Server::Server(): _createdTime(time(NULL))
@@ -117,10 +118,13 @@ void Server::servRun()
 				ssize_t bytes = recv(_clientFd, buffer, sizeof(buffer), 0);
 				if (bytes > 0)
 					buffer[bytes] = '\0';
-				std::cout << utilsTimestamp() << "Request content:\n*****\n" << std::endl;
+		/*		std::cout << utilsTimestamp() << "Request content:\n*****\n" << std::endl;
 				std::cout << buffer;
 				std::cout << "*****" << std::endl;
-			
+		*/
+
+				HttpRequest	req = HttpRequest( buffer, *this );
+				
 				std::string response = 
 				"HTTP/1.1 200 OK\n"
 				"Content-Type: text/html\n"

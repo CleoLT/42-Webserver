@@ -6,7 +6,7 @@
 /*   By: cle-tron <cle-tron@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:03 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/06/22 16:32:35 by cle-tron         ###   ########.fr       */
+/*   Updated: 2025/07/17 13:08:44 by cle-tron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,23 @@
 #define	HTTPREQUEST_HPP
 
 
-#include "RequestLine.hpp"
+#include "Server.hpp"
 #include <string>
 
 class	RequestLine;
+class	Uri;
 
 class	HttpRequest	{
-private:
-	
-	RequestLine	*	req_line;
+private:	
+	RequestLine	*						req_line;
+	Uri *								uri;
+	std::pair<std::string, std::string>	host;
 //	RequestHeaders	headers;
 //	RequestBody		body;	
 
 public:
 	HttpRequest();
-	HttpRequest( std::string const & message );
+	HttpRequest( std::string const & message, Server & server );
 	HttpRequest( HttpRequest const & src );
 	~HttpRequest();
 

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/16 20:34:31 by esellier          #+#    #+#             */
-/*   Updated: 2025/07/14 18:30:51 by esellier         ###   ########.fr       */
+/*   Created: 2025/06/12 14:56:03 by cle-tron          #+#    #+#             */
+/*   Updated: 2025/07/16 11:58:23 by cle-tron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,6 @@ int main(int ac, char** av)
 	
 	HttpRequest test = HttpRequest();
 	
-	std::string	http_mess( "POST /form?querysinparseo HTTP/1.1\r\nHost: www.ejemplo.com\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 27\r\n\r\nnombre=juan&apel\rido=perez" );
-
-	HttpRequest	req = HttpRequest( http_mess );
-
-	std::cout << "method: " << req.getHttpMethod() <<  std::endl;
-	std::cout << "uri: " << req.getRequestUri() << std::endl;
-	std::cout << "path: " << req.getPath() << std::endl;
-	std::cout << "query: " << req.getQuery() << std::endl;
-	std::cout << "version: " << req.getHttpVersion() << std::endl;
-
 	testserv.servSetup();
 	testserv.servRun();
 
