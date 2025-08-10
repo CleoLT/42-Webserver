@@ -6,7 +6,7 @@
 /*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 15:30:50 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/08/07 15:49:22 by fdi-cecc         ###   ########.fr       */
+/*   Updated: 2025/08/10 14:12:54 by fdi-cecc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ public:
 	int									   getRspCount() const;
 	void								   servQuit();
 	void								   servInput();
-	void								   servRespond(ClientConnection &connection);
-	bool								   servReceive(ClientConnection &connection);
+	void								   servRespond(HttpRequest req, ClientConnection connection, std::pair<int, std::string> incoming);
+	// bool								   servReceive(ClientConnection &connection);
 	// TODO create servQuit() to stop all servers;
 };
 

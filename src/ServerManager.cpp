@@ -6,7 +6,7 @@
 /*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 15:30:53 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/08/08 17:52:44 by fdi-cecc         ###   ########.fr       */
+/*   Updated: 2025/08/10 14:20:35 by fdi-cecc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void ServerManager::servListen(std::pair<int, std::string> _listens)
 		graError("Nonblocking setup error");
 
 	std::memset(&newaddr, 0, sizeof(newaddr));
-	newaddr.sin_family		= AF_INET;
-	newaddr.sin_port		= htons(_listens.first);
+	newaddr.sin_family = AF_INET;
+	newaddr.sin_port   = htons(_listens.first);
 	newaddr.sin_addr.s_addr = inet_addr(_listens.second.c_str()); // TODO check if inet_addr can be used
 
 	if (bind(newsocket, (struct sockaddr *)&newaddr, sizeof(newaddr)) < 0)
@@ -118,51 +118,51 @@ std::pair<int, std::string> ServerManager::getSocketData(int socketFd)
 	return std::make_pair(portIn, ipStr);
 }
 
-bool ServerManager::servReceive(ClientConnection &connection)
-{
-	bool isComplete = false;
+// bool ServerManager::servReceive(ClientConnection &connection)
+// {
+// 	bool isComplete = false;
 
-	if (connection.clientFd >= 0)
-	{
-		printBoxMsg("New connection accepted");
+// 	if (connection.clientFd >= 0)
+// 	{
+// 		printBoxMsg("New connection accepted");
 
-		char	  buffer[4096]; // HACK i put 4096, but i don't know if it's right
-		int		  attempts	  = 0;
-		const int maxAttempts = 100;
+// 		char	  buffer[4096]; // HACK i put 4096, but i don't know if it's right
+// 		int		  attempts	  = 0;
+// 		const int maxAttempts = 100;
 
-		while (!isComplete && attempts < maxAttempts)
-		{
-			ssize_t bytes = recv(connection.clientFd, buffer, sizeof(buffer) - 1, 0);
-			if (bytes > 0)
-			{
-				buffer[bytes] = '\0';
-				connection.fullRequest += buffer;
-				if (connection.fullRequest.find("\r\n\r\n") != std::string::npos) // TODO check what happens with other bodies in POST
-					isComplete = true;
-			}
-			else if (bytes == 0)
-				return false;
-			else if (bytes < 0)
-			{
-				usleep(10000); // wait and try again
-				attempts++;
-				continue;
-			}
-		}
-	}
-	// std::cout << GREEN << connection.fullRequest << RESET << std::endl; // TODO delete when done
-	printRaw(connection.fullRequest);
-	return isComplete;
-}
+// 		while (!isComplete && attempts < maxAttempts)
+// 		{
+// 			ssize_t bytes = recv(connection.clientFd, buffer, sizeof(buffer) - 1, 0);
+// 			if (bytes > 0)
+// 			{
+// 				buffer[bytes] = '\0';
+// 				connection.fullRequest += buffer;
+// 				if (connection.fullRequest.find("\r\n\r\n") != std::string::npos) // TODO check what happens with other bodies in POST
+// 					isComplete = true;
+// 			}
+// 			else if (bytes == 0)
+// 				return false;
+// 			else if (bytes < 0)
+// 			{
+// 				usleep(10000); // wait and try again
+// 				attempts++;
+// 				continue;
+// 			}
+// 		}
+// 	}
+// 	// std::cout << GREEN << connection.fullRequest << RESET << std::endl; // TODO delete when done
+// 	printRaw(connection.fullRequest);
+// 	return isComplete;
+// }
 
-void ServerManager::servRespond(ClientConnection &connection)
+void ServerManager::servRespond(HttpRequest req, ClientConnection connection,
+								std::pair<int, std::string> incoming)
 {
 	try
 	{
-		std::pair<int, std::string> incoming = getSocketData(_socketFd[connection.socketIndex]);
-		HttpRequest					req		 = HttpRequest(incoming, connection.fullRequest, *this);
-		Response					resp(req);
-		std::string					fullPath = req.getFullPath().first + req.getFullPath().second; // TODO make error management for bad request
+		Response	resp(req);
+		std::string fullPath = req.getFullPath().first +
+							   req.getFullPath().second; // TODO make error management for bad request
 		printRequest(*this, _socketFd[connection.socketIndex], connection.fullRequest, fullPath,
 					 req.getHttpMethod());
 		resp.setContent(req.getFullPath(), req.getHttpMethod());
@@ -198,15 +198,9 @@ void ServerManager::servIncoming(struct pollfd *polls, const size_t socketsize)
 			connection.clientFd	   = accept(_socketFd[i], (struct sockaddr *)&connection.clientAddr,
 											&connection.clientLen);
 
-			if (servReceive(connection) && !connection.fullRequest.empty())
-				servRespond(connection);
-			else
-			{
-				printBoxError("Incomplete or empty request received");
-				std::string errorResponse = "HTTP/1.1 400 Bad Request\r\nContent-Length: "
-											"0\r\nConnection: close\r\n\r\n";
-				send(connection.clientFd, errorResponse.c_str(), errorResponse.length(), 0);
-			}
+			std::pair<int, std::string> incoming = getSocketData(_socketFd[connection.socketIndex]);
+			HttpRequest					req(incoming, &connection, *this);
+			servRespond(req, connection, incoming);
 			close(connection.clientFd);
 		}
 	}

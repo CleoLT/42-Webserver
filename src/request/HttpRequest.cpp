@@ -6,7 +6,7 @@
 /*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:08 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/07 17:19:39 by cle-tron         ###   ########.fr       */
+/*   Updated: 2025/08/10 14:38:49 by fdi-cecc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ HttpRequest::HttpRequest() : req_line( NULL ), uri( NULL ) {
 
 }
 
-HttpRequest::HttpRequest(std::pair<int, std::string> incoming, std::string fullRequest, ServerManager &server) : req_line(NULL), uri(NULL) {
+HttpRequest::HttpRequest(std::pair<int, std::string> incoming, ClientConnection *connection, ServerManager &server) : _connection(connection), req_line(NULL), uri(NULL) {
 	try {
 
 		// std::cout << message << std::endl;
+		receiveRequest();
 		std::string							tmp_host;
-		std::vector<std::string>			lines = HttpParser::parseHttpMessage( fullRequest, tmp_host );
+		std::vector<std::string>			lines = HttpParser::parseHttpMessage( _connection->fullRequest, tmp_host );
 		std::vector<std::string>::iterator	it = lines.begin();
 		std::vector<std::string>::iterator	ite = lines.end();
 
@@ -34,6 +35,7 @@ HttpRequest::HttpRequest(std::pair<int, std::string> incoming, std::string fullR
 		// std::cout << "tmp_host: \"" << tmp_host << "\" /host pair first: \"" << host.first;
 		// std::cout << "\", second: \"" << host.second <<  "\"" << std::endl;
 
+		printRaw(_connection->fullRequest);
 		while ( it != ite && (*it).empty() )
 			++it;
 
@@ -72,8 +74,8 @@ HttpRequest::HttpRequest(std::pair<int, std::string> incoming, std::string fullR
 		}
 
 		//BODY
-		std::size_t found = fullRequest.rfind( "\r\n\r\n" );
-		body = fullRequest.substr( found + 4 , fullRequest.length() - found + 4);
+		std::size_t found = _connection->fullRequest.rfind( "\r\n\r\n" );
+		body = _connection->fullRequest.substr( found + 4 , _connection->fullRequest.length() - found + 4);
 
 		std::cout << "Body: " << body << std::endl;
 
@@ -94,9 +96,9 @@ HttpRequest::~HttpRequest() {
 
 HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
     if (this != &rhs) {
-        if (req_line) delete req_line;
+        // if (req_line) delete req_line; // TODO segfault here
         req_line = rhs.req_line ? new RequestLine(*rhs.req_line) : NULL;
-		if (uri) delete uri;
+		// if (uri) delete uri;
         uri = rhs.uri ? new Uri(*rhs.uri) : NULL;
 		//anadir HOST PAIR 
 		//anadir header y body
@@ -137,4 +139,41 @@ std::string	HttpRequest::getQuery() const { return this->uri->getQuery(); }
 
 std::string	HttpRequest::getHttpVersion() const { return this->req_line->getVersion(); }
 
+void	HttpRequest::receiveRequest()
+{
+	bool isComplete = false;
 
+	if (_connection->clientFd >= 0)
+	{
+		printBoxMsg("New connection accepted");
+
+		char	  buffer[4096]; // HACK i put 4096, but i don't know if it's right
+		int		  attempts	  = 0;
+		const int maxAttempts = 100;
+
+		while (!isComplete && attempts < maxAttempts)
+		{
+			ssize_t bytes = recv(_connection->clientFd, buffer, sizeof(buffer) - 1, 0);
+			if (bytes > 0)
+			{
+				buffer[bytes] = '\0';
+				_connection->fullRequest += buffer;
+				if (_connection->fullRequest.find("\r\n\r\n") != std::string::npos) // TODO check what happens with other bodies in POST
+					isComplete = true;
+			}
+			else if (bytes == 0)
+			{
+				_connection->fullRequest = "";
+				return ;
+			}
+			else if (bytes < 0)
+			{
+				usleep(10000); // wait and try again
+				attempts++;
+				continue;
+			}
+		}
+	}
+	// std::cout << GREEN << connection.fullRequest << RESET << std::endl; // TODO delete when done
+	printRaw(_connection->fullRequest);
+}
