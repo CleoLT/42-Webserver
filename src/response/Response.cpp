@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:51:24 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/08/28 13:48:47 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/28 19:45:45 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ std::string Response::prepFile()
 {
 	// Check if it's a binary file (image)
 	//check if _location is empty first? TODO
-
 	if (isBinary(_location))
 	{
 		std::ifstream file(_location.c_str(), std::ios::binary);
@@ -83,13 +82,6 @@ std::string Response::prepFile()
 		DIR *dir = opendir(_location.c_str());
 		if (!dir)
 			return "";//return error to open directory
-	    if (access(_location.c_str(), R_OK) != 0)
-		{
-			closedir(dir);
-    	    return "";//return error miss right to read what's inside
-		}
-		if (this->getAutoindex() == false)
-            return ""; //return error not allowed to read inside
         return doAutoindex(_location, dir);
 	}
 	else
@@ -346,8 +338,11 @@ void Response::prepResponse()
 
 	if (_contentType == "cgi-script")
 		content = runScript(_location);
-	else
+	
+	else if (_request->getStatusCode() == 200)
 		content = prepFile();
+	// else
+	// 	//errorpages
 
 	std::ostringstream output;
 	output << content.length();

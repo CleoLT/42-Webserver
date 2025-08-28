@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 16:59:58 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/27 16:10:42 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/28 19:39:51 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,14 +309,44 @@ ServerData const &	HttpParser::checkIfServerExist( std::vector<ServerData> const
 
 }
 
-void	HttpParser::checkIfPathExist( std::pair<std::string, std::string>  const & path ) {
+void	HttpParser::checkIfPathExist( std::pair<std::string, std::string>  const & path, bool _autoindex )
+{
 	std::string full( path.first + path.second );
 
+	if (path.second == "/redirect" || path.second == "/redirect/")
+		full = path.first + "/redirect/index.html";
+	else if (path.second == "/" || path.second.empty())
+		full = path.first + "/index.html";
 //	std::cout << "FULL: " << full << std::endl;
 
 	if ( access( full.c_str(), F_OK ) == -1 ) throw std::invalid_argument( E_404 );
-
-
+	
+	if (isBinary(full))
+	{
+		std::ifstream file(full.c_str(), std::ios::binary);
+		if (!file.is_open())
+			throw std::invalid_argument(E_403);
+		file.close();
+	}
+    else if (isFolder(full))
+    {
+		DIR *dir = opendir(full.c_str());
+		if (!dir)
+			throw std::invalid_argument(E_403);
+	    if (access(full.c_str(), R_OK) != 0 || _autoindex == false) //TODO check if there is an index
+		{
+			closedir(dir);
+			throw std::invalid_argument(E_403);
+		}
+		closedir(dir);
+	}
+	else
+	{
+		std::ifstream page(full.c_str());
+		if (!page.is_open())
+			throw std::invalid_argument(E_403);
+		page.close();
+	}
 //	std::cout << "PATH EXIST IN SERVER: " << full << std::endl;
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:32:05 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/27 10:16:48 by fdi-cecc         ###   ########.fr       */
+/*   Updated: 2025/08/28 19:44:27 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ public:
 
 	void								sendBuffer( char *buffer, ssize_t bytes );
 	void								setStatusCode( std::string error );
-  void		printBodies(); // DBG this can be deleted, it's just for testing
+    void								printBodies(); // DBG this can be deleted, it's just for testing
 	std::string							getHttpMethod() const;
 	std::string							getRequestUri() const;
 	std::string							getPath() const;

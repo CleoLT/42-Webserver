@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:08 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/28 14:00:10 by fdi-cecc         ###   ########.fr       */
+/*   Updated: 2025/08/28 19:51:55 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void HttpRequest::finalHeadersParsingRoutine()
 	//	std::cout << "FULLPATH: " << this->_fullPath.first << " " << this->_fullPath.second << std::endl;
 	//	std::cout << "PATH: " << this->uri->getPath() << std::endl;
 	setLocation(serv.getLocations(), this->_fullPath.second);
-	HttpParser::checkIfPathExist(this->_fullPath);
+	HttpParser::checkIfPathExist(this->_fullPath, getAutoindex());
 	HttpParser::notAllowedMethod(serv.getItLocations(this->location), serv.getAllowedMethods(),
 								 this->req_line->getMethod());
 	if (this->headers->getHeader("content-type") != this->headers->getHeaderEnd())
