@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 19:35:03 by esellier          #+#    #+#             */
-/*   Updated: 2025/08/28 19:57:19 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 11:28:30 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,15 @@ class LocationConf : public ABlockBase
 		LocationConf(LocationConf const& other);
 		LocationConf&								operator=(LocationConf const& other);
 
-		virtual bool								getAutoindex() const;
+		virtual std::string const&					getRoot() const;
+		bool										getAutoindex() const;
 		std::string	const&							getKey() const;
 		void										setKey(std::string const value);
+		size_t										fillAutoIndex(std::vector<std::string>& buffer, size_t i);
 	
 	private:
 		std::string									_key;
+		bool    									_autoindex;
 };
 
 #endif

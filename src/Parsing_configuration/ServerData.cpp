@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:02:05 by esellier          #+#    #+#             */
-/*   Updated: 2025/08/28 20:02:52 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:56:56 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ ServerData&	ServerData::operator=(ServerData const& other)
 	return *this;
 }
 
-bool    ServerData::getAutoindex() const
+std::string const&	ServerData::getRoot() const
 {
-	return _autoindex;
+	return _root;
 }
 
 std::map<std::string, LocationConf>&	ServerData::getLocations() const

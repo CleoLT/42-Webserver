@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:08 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/28 19:51:55 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 11:31:43 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,10 +298,9 @@ void HttpRequest::setLocation(std::map<std::string, LocationConf> &location, std
 
 //	for ( std::map<std::string, LocationConf>::iterator itt = location.begin(); itt != location.end(); ++itt)
 //		std::cout << "LOCATION CONF: " << itt->first << std::endl;
-	_autoindex = it->second.getAutoindex(); //ADD by EMILIE
 	if ( it == location.end() )
-    throw std::invalid_argument( E_404 ); 
-
+    	throw std::invalid_argument( E_404 ); 
+	_autoindex = it->second.getAutoindex(); //ADD by EMILIE
 	//	std::cout << "LOCATION EXIST IN SERVER: " << (*it).first << std::endl;
 }
 

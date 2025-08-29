@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:51:24 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/08/28 19:45:45 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 11:55:52 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,15 @@ std::string Response::prepFile()
 	}
     else if (isFolder(_location))
     {
-		// if (not exist) //find location bloc, done by cleo in http request
-		// 	//error
 		DIR *dir = opendir(_location.c_str());
 		if (!dir)
 			return "";//return error to open directory
-        return doAutoindex(_location, dir);
+		if (access(_location.c_str(), R_OK) != 0 || this->getAutoindex() == false)
+		{
+			closedir(dir);
+    	    return "";//return error miss right to read what's inside
+		}
+        return doAutoindex(_request->getFullPath().second, dir);
 	}
 	else
 	{
@@ -95,13 +98,19 @@ std::string Response::prepFile()
 		return pageContent.str();
 	}
 }
+// 	    if (access(_location.c_str(), R_OK) != 0)
+// 		{
+// 			closedir(dir);
+//     	    return "";//return error miss right to read what's inside
+// 		}
+// 		if (this->getAutoindex() == false)
+//             return ""; //return error not allowed to read inside
 
-std::string Response::doAutoindex(std::string location, DIR *dir)
+std::string Response::doAutoindex(std::string uri, DIR *dir)
 {
     std::ostringstream html;
     struct dirent *entry;
 
-    std::string uri = location.substr(5);
 	doHtmlAutoindex(uri, html);
 	
     while ((entry = readdir(dir)) != NULL)
@@ -339,7 +348,9 @@ void Response::prepResponse()
 	if (_contentType == "cgi-script")
 		content = runScript(_location);
 	
-	else if (_request->getStatusCode() == 200)
+	// else if (_request->getStatusCode() == 200)
+	// 	content = prepFile();
+	else
 		content = prepFile();
 	// else
 	// 	//errorpages

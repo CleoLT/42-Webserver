@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 16:30:43 by esellier          #+#    #+#             */
-/*   Updated: 2025/07/14 14:07:33 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:59:32 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ class ABlockBase
 		ABlockBase(ABlockBase const& other);
 		ABlockBase&	operator=(ABlockBase const& other);
 
-		virtual bool								getAutoindex() const = 0;
-		std::string const&							getRoot() const;
+		virtual std::string const&					getRoot() const = 0;
 		unsigned int const&							getBodySize() const;
 		std::vector<std::string> const&				getReturnDirective() const;
 		std::vector<std::string> const&				getIndex() const;
@@ -33,7 +32,6 @@ class ABlockBase
 		std::map<std::string, std::string> const&	getCgiPass() const;
 
 		bool	checkFlag(std::string const& value);
-		size_t	fillAutoIndex(std::vector<std::string>& buffer, size_t i);
 		size_t	fillRoot(std::vector<std::string>& buffer, size_t i);
 		size_t	fillIndex(std::vector<std::string>& buffer, size_t i);
 		size_t	fillBodySize(std::vector<std::string>& buffer, size_t i);
@@ -43,7 +41,6 @@ class ABlockBase
 		size_t	fillCgiPass(std::vector<std::string>& buffer, size_t i);
 	
 	protected:
-		bool    							_autoindex;
 		std::string							_root;
 		unsigned int						_bodySize;
 		std::vector<std::string>			_flag;

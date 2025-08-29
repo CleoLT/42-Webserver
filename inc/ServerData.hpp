@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerData.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fdi-cecc <fdi-cecc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 16:30:43 by esellier          #+#    #+#             */
-/*   Updated: 2025/08/05 15:51:47 by fdi-cecc         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:58:43 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ public:
 	ServerData(ServerData const& other);
 	ServerData& operator=(ServerData const& other);
 
-	bool										  getAutoindex() const;
-	std::map<std::string, LocationConf>&		  getLocations() const;
-	std::map<std::string, LocationConf>::iterator getItLocations(
+	virtual std::string const&						getRoot() const;
+	std::map<std::string, LocationConf>&			getLocations() const;
+	std::map<std::string, LocationConf>::iterator	getItLocations(
 		std::string const& key);
-	std::vector<std::pair<int, std::string> > getListens() const;
-	std::vector<std::string>				  getServerName() const;
-	size_t fillListens(std::vector<std::string>& buffer, size_t i);
-	size_t fillServerName(std::vector<std::string>& buffer, size_t i);
+	std::vector<std::pair<int, std::string> >		getListens() const;
+	std::vector<std::string>				  		getServerName() const;
+	size_t 											fillListens(std::vector<std::string>& buffer, size_t i);
+	size_t 											fillServerName(std::vector<std::string>& buffer, size_t i);
 
 private:
 	std::vector<std::pair<int, std::string> > _listens;

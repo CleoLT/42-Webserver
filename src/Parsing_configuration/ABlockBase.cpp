@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 18:02:05 by esellier          #+#    #+#             */
-/*   Updated: 2025/08/26 18:31:36 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:53:09 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 ABlockBase::ABlockBase()
 {
-	_autoindex = false;
 	_root = "/www";
 	_index.push_back("index.html");
 	_bodySize = 1048576;
@@ -24,6 +23,7 @@ ABlockBase::ABlockBase()
 	_allowedMethods.push_back("GET");
 	_allowedMethods.push_back("POST");
 	_cgiPass[".py"] = "/usr/bin/python3";
+	_cgiPass[".php"] = "/usr/bin/php-cgi";
 }
   
 ABlockBase::~ABlockBase() {} 
@@ -36,7 +36,6 @@ ABlockBase&	ABlockBase::operator=(ABlockBase const& other)
 {
 	if (this != &other)
 	{
-		this->_autoindex = other._autoindex;
 		this->_root = other._root;
 		this->_index = other._index;
 		this->_bodySize = other._bodySize;
@@ -48,10 +47,6 @@ ABlockBase&	ABlockBase::operator=(ABlockBase const& other)
 	return *this;
 }
 
-std::string const& ABlockBase::getRoot() const
-{
-	return _root;
-}
 std::vector<std::string> const& ABlockBase::getIndex() const
 {
 	return _index;
@@ -91,29 +86,6 @@ bool	ABlockBase::checkFlag(std::string const& value)
 	}
 	_flag.push_back(value);
 	return false;
-}
-
-size_t	ABlockBase::fillAutoIndex(std::vector<std::string>& buffer, size_t i)
-{
-	if ( i >= buffer.size() || buffer[i].empty())
-		throw std::invalid_argument(" Parsing error, miss 'autoindex' argument\n");
-	if (buffer[i] != "on" && buffer[i] != "off")
-		throw std::invalid_argument(" Parsing error, 'autoindex' allow only"
-			" 'on' or 'off' arguments\n");
-	if (i + 1 >= buffer.size())
-		throw std::invalid_argument(" Parsing error, miss semicolon after"
-			" 'autoindex' argument\n");
-	if (i + 1 < buffer.size() && buffer[i + 1] != ";")
-		throw std::invalid_argument(" Parsing error, 'autoindex' allow only"
-			" one argument\n");
-	if (checkFlag("autoindex"))
-		throw std::invalid_argument(" Parsing error, only one 'autoindex'"
-			" directive allowed by server block\n"); 
-	if (buffer[i] == "on")
-		_autoindex = true;
-	else
-		_autoindex = false;
-	return (i + 2);
 }
 
 size_t	ABlockBase::fillRoot(std::vector<std::string>& buffer, size_t i)

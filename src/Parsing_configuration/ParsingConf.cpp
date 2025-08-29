@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 19:21:07 by esellier          #+#    #+#             */
-/*   Updated: 2025/08/26 18:27:04 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 11:22:23 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,8 +232,8 @@ size_t	ParsingConf::fillServers(std::vector<std::string>& buffer, size_t& i,
 			i = itServer->fillListens(buffer, i + 1);
 		else if (buffer[i] == "server_name")
 			i = itServer->fillServerName(buffer, i + 1);
-		else if (buffer[i] == "autoindex")
-			i = blocks.back()->fillAutoIndex(buffer, i + 1);
+		// else if (buffer[i] == "autoindex")
+		// 	i = blocks.back()->fillAutoIndex(buffer, i + 1);
 		else if (buffer[i] == "root")
 			i = blocks.back()->fillRoot(buffer, i + 1);
 		else if (buffer[i] == "index")
@@ -253,6 +253,7 @@ size_t	ParsingConf::fillServers(std::vector<std::string>& buffer, size_t& i,
 		else
 			throw std::invalid_argument(" Parsing error, invalid directives: " + buffer[i]);
 	}
+	std::cout << PURPLE << buffer[i] << i << std::endl;
 	return num;
 }
 
@@ -274,7 +275,7 @@ size_t	ParsingConf::fillLocations(std::vector<std::string>& buffer, size_t& i,
 			throw std::invalid_argument("Parsing error, '" + buffer[i] +
 			"' directive allowed only in server block\n");	
 		else if (buffer[i] == "autoindex")
-			i = blocks.back()->fillAutoIndex(buffer, i + 1);
+			i = itLocation->second.fillAutoIndex(buffer, i + 1);
 		else if (buffer[i] == "root")
 			i = blocks.back()->fillRoot(buffer, i + 1);
 		else if (buffer[i] == "index")
@@ -294,6 +295,7 @@ size_t	ParsingConf::fillLocations(std::vector<std::string>& buffer, size_t& i,
 		else
 		 	throw std::invalid_argument(" Parsing error, invalid directives: " + buffer[i]);
 	}
+	std::cout << PINK << buffer[i] << std::endl;
 	return i;
 }
 
