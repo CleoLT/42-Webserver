@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 11:51:24 by fdi-cecc          #+#    #+#             */
-/*   Updated: 2025/08/29 11:55:52 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 14:25:31 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void Response::setResponse(std::string response)
 void Response::setContent(std::pair<std::string, std::string> fullPath, std::string method)
 {
 	std::cout << PINK << "FullPath.first: " << fullPath.first << "\n" << "FullPath.second: " << fullPath.second << RESET << std::endl; // TO BORROW
-	if (fullPath.second == "/redirect" || fullPath.second == "/redirect/") //TODO check with another code (303) and send good errorpages
+	if (fullPath.second == "/redirect/") //TODO check with another code (303) and send good errorpages
 		_location = fullPath.first + "/redirect/index.html";
 	else if (fullPath.second == "/" || fullPath.second.empty())
 		_location = fullPath.first + "/index.html";
@@ -65,6 +65,7 @@ std::string Response::prepFile()
 {
 	// Check if it's a binary file (image)
 	//check if _location is empty first? TODO
+	
 	if (isBinary(_location))
 	{
 		std::ifstream file(_location.c_str(), std::ios::binary);
@@ -77,14 +78,21 @@ std::string Response::prepFile()
 	}
     else if (isFolder(_location))
     {
+		// if (not exist) //find location bloc, done by cleo in http request
+		// 	//error
 		DIR *dir = opendir(_location.c_str());
 		if (!dir)
 			return "";//return error to open directory
-		if (access(_location.c_str(), R_OK) != 0 || this->getAutoindex() == false)
-		{
-			closedir(dir);
-    	    return "";//return error miss right to read what's inside
-		}
+	    // if (access(_location.c_str(), R_OK) != 0)
+		// {
+		// 	closedir(dir);
+    	//     return "";//return error miss right to read what's inside
+		// }
+		// if (this->getAutoindex() == false)
+		// {
+		// 	closedir(dir);
+    	//     return "";//return error miss right to read what's inside
+		// }
         return doAutoindex(_request->getFullPath().second, dir);
 	}
 	else
@@ -98,13 +106,6 @@ std::string Response::prepFile()
 		return pageContent.str();
 	}
 }
-// 	    if (access(_location.c_str(), R_OK) != 0)
-// 		{
-// 			closedir(dir);
-//     	    return "";//return error miss right to read what's inside
-// 		}
-// 		if (this->getAutoindex() == false)
-//             return ""; //return error not allowed to read inside
 
 std::string Response::doAutoindex(std::string uri, DIR *dir)
 {
@@ -127,7 +128,6 @@ std::string Response::doAutoindex(std::string uri, DIR *dir)
     closedir(dir);
     return html.str();
 }
-
 
 void Response::doHtmlAutoindex(std::string &uri, std::ostringstream &html)
 {
@@ -239,7 +239,7 @@ std::string Response::runScript(std::string const &cgiPath)
 		close(pipeOut[PIPE_READ]);
 		dup2(pipeOut[PIPE_WRITE], STDOUT_FILENO);
 		close(pipeOut[PIPE_WRITE]);
-
+		
 		/* TODO wrap env creation
 		into its owh function*/
 
@@ -305,7 +305,7 @@ std::string Response::runScript(std::string const &cgiPath)
 		}
 		else
 		{
-			content		 = scriptOutput;
+			content = scriptOutput;
 			_contentType = "text/html";
 			std::cout << GREEN << "CGI script output captured: " << scriptOutput.length()
 					  << " bytes" << RESET << std::endl;
@@ -318,7 +318,8 @@ std::string Response::checkType()
 {
 	if (isFolder(_location) && _autoindex)
 		return "text/html";
-		
+	//TODO check if INDEX in the folder?	
+	
 	std::string extension;
 	size_t		dotPos = _location.find_last_of('.');
 	if (dotPos != std::string::npos)
@@ -354,13 +355,12 @@ void Response::prepResponse()
 		content = prepFile();
 	// else
 	// 	//errorpages
-
 	std::ostringstream output;
 	output << content.length();
 	_contentLength = output.str();
 
 	Header header(*this);
-	_response = header.getHeader() + content;
+		_response = header.getHeader() + content;
 }
 
 void Response::printRawResponse()

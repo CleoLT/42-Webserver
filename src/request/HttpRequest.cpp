@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:08 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/29 11:31:43 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 14:32:37 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,8 +299,10 @@ void HttpRequest::setLocation(std::map<std::string, LocationConf> &location, std
 //	for ( std::map<std::string, LocationConf>::iterator itt = location.begin(); itt != location.end(); ++itt)
 //		std::cout << "LOCATION CONF: " << itt->first << std::endl;
 	if ( it == location.end() )
-    	throw std::invalid_argument( E_404 ); 
-	_autoindex = it->second.getAutoindex(); //ADD by EMILIE
+		throw std::invalid_argument(E_404);
+	std::cout << PINK << "REQUEST AUTOINDEX: " << it->second.getAutoindex() << std::endl << RESET; //TO BORROW
+		_autoindex = it->second.getAutoindex();
+	std::cout << PINK << it->first << "\n" << _autoindex << std::endl << RESET; //TO BORROW
 	//	std::cout << "LOCATION EXIST IN SERVER: " << (*it).first << std::endl;
 }
 
@@ -358,7 +360,10 @@ int HttpRequest::getStatusCode() const
 	return this->code;
 }
 
-bool HttpRequest::getAutoindex() const { return this->_autoindex; }
+bool HttpRequest::getAutoindex() const
+{ 
+	return _autoindex;
+}
 
 int HttpRequest::getParsingState() const
 {

@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 16:59:58 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/29 12:51:55 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/29 14:30:56 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,10 +318,16 @@ void	HttpParser::checkIfPathExist( std::pair<std::string, std::string>  const & 
 	else if (path.second == "/" || path.second.empty())
 		full = path.first + "/index.html";
 
-	if ( access( full.c_str(), F_OK ) == -1 ) throw std::invalid_argument( E_404 );
+	std:: cout << PINK << "FULL: " << full << std::endl << RESET; // TO BORROW
+	if ( access( full.c_str(), F_OK ) == -1 )
+	{// TO BORROW
+		std:: cout << PINK << "it's here\n" << RESET;// TO BORROW
+		throw std::invalid_argument( E_404 );
+	}// TO BORROW
 	
 	if (isBinary(full))
 	{
+		std::cout << PINK << "inside binary\n" << RESET;
 		std::ifstream file(full.c_str(), std::ios::binary);
 		if (!file.is_open())
 			throw std::invalid_argument(E_403);
@@ -329,18 +335,22 @@ void	HttpParser::checkIfPathExist( std::pair<std::string, std::string>  const & 
 	}
     else if (isFolder(full))
     {
+		std::cout << PINK << "inside folder\n" << RESET;
 		DIR *dir = opendir(full.c_str());
 		if (!dir)
 			throw std::invalid_argument(E_403);
-	    if (access(full.c_str(), R_OK) != 0 || _autoindex == false) //TODO check if there is an index
+	    if (access(full.c_str(), R_OK) != 0) //TODO check if there is an index
 		{
 			closedir(dir);
 			throw std::invalid_argument(E_403);
 		}
+		(void) _autoindex;
+		// if ( pas d'index && _autoindex == false)
 		closedir(dir);
 	}
 	else
 	{
+		std::cout << PINK << "inside page\n" << RESET;
 		std::ifstream page(full.c_str());
 		if (!page.is_open())
 			throw std::invalid_argument(E_403);
