@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 16:59:58 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/29 14:30:56 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/30 16:46:50 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,7 @@ void	HttpParser::checkIfPathExist( std::pair<std::string, std::string>  const & 
 	std:: cout << PINK << "FULL: " << full << std::endl << RESET; // TO BORROW
 	if ( access( full.c_str(), F_OK ) == -1 )
 	{// TO BORROW
-		std:: cout << PINK << "it's here\n" << RESET;// TO BORROW
+		std:: cout << PINK << "it's here 404\n" << RESET;// TO BORROW
 		throw std::invalid_argument( E_404 );
 	}// TO BORROW
 	

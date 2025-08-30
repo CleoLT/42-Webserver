@@ -6,7 +6,7 @@
 /*   By: esellier <esellier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 15:03:08 by cle-tron          #+#    #+#             */
-/*   Updated: 2025/08/29 14:32:37 by esellier         ###   ########.fr       */
+/*   Updated: 2025/08/30 16:50:46 by esellier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,21 +288,21 @@ void HttpRequest::setStatusCode(std::string error)
 void HttpRequest::setLocation(std::map<std::string, LocationConf> &location, std::string const &path)
 {
 	std::size_t found = path.rfind("/");
+	std::cout << PINK  << "request path: " << path << std::endl << RESET; //TO BORROW
 
 	//	if ( found == std::string::npos ) //BADREQUEST
 
 	this->location = path.substr(0, found + 1);
-	//	std::cout << "LOCATION REQ: " << this->location << std::endl;
-
+	std::cout << PINK << "LOCATION REQ: " << this->location << std::endl;
+// EMILIE this not ok because for ./error_pages/ esta buscando / solo
 	std::map<std::string, LocationConf>::iterator it = location.find(this->location);
 
 //	for ( std::map<std::string, LocationConf>::iterator itt = location.begin(); itt != location.end(); ++itt)
 //		std::cout << "LOCATION CONF: " << itt->first << std::endl;
 	if ( it == location.end() )
 		throw std::invalid_argument(E_404);
-	std::cout << PINK << "REQUEST AUTOINDEX: " << it->second.getAutoindex() << std::endl << RESET; //TO BORROW
-		_autoindex = it->second.getAutoindex();
-	std::cout << PINK << it->first << "\n" << _autoindex << std::endl << RESET; //TO BORROW
+	_autoindex = it->second.getAutoindex();
+	std::cout << PINK  << "request autoindex: " << it->first << ", " << _autoindex << std::endl << RESET; //TO BORROW
 	//	std::cout << "LOCATION EXIST IN SERVER: " << (*it).first << std::endl;
 }
 
